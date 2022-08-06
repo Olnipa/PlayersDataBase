@@ -43,10 +43,11 @@
 
     class DataBase
     {
-        public List<Player> Players { get; private set; }
+        private List<Player> _players;
+        
         public DataBase(List<Player> players)
         {
-            Players = players;
+            _players = players;
         }
 
         public void ShowPlayers(List<Player> players)
@@ -101,7 +102,7 @@
             }
         }
 
-        public bool FindPlayerID(List<Player> players, out int i, string id)
+        private bool FindPlayerID(List<Player> players, out int i, string id)
         {
             bool idIsFound = false;
             i = 0;
@@ -130,7 +131,7 @@
             return idIsFound;
         }
 
-        public void WriteMessage(string text, ConsoleColor color = ConsoleColor.Green)
+        private void WriteMessage(string text, ConsoleColor color = ConsoleColor.Green)
         {
             ConsoleColor defaultColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
@@ -185,10 +186,11 @@
      
     class Player
     {
+        private bool _isBanned;
+
         public int ID {get; private set;}
         public string Name { get; private set; }
         public int Level { get; private set; }
-        private bool _isBanned;
         public bool IsBanned
         {
             get
