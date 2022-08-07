@@ -19,19 +19,19 @@
                 switch (choosenMenu)
                 {
                     case "1":
-                        dataBase.AddPlayer(players);
+                        dataBase.AddPlayer();
                         break;
                     case "2":
-                        dataBase.BanPlayer(players);
+                        dataBase.BanPlayer();
                         break;
                     case "3":
-                        dataBase.UnbanPlayer(players);
+                        dataBase.UnbanPlayer();
                         break;
                     case "4":
-                        dataBase.DeletePlayer(players);
+                        dataBase.DeletePlayer();
                         break;
                     case "5":
-                        dataBase.ShowPlayers(players);
+                        dataBase.ShowPlayers();
                         break;
                     case "0":
                         isWorking = false;
@@ -50,68 +50,68 @@
             _players = players;
         }
 
-        public void ShowPlayers(List<Player> players)
+        public void ShowPlayers()
         {
             Console.WriteLine();
 
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < _players.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. ID - {players[i].ID}. Name - {players[i].Name}. Level - {players[i].Level}. Is banned - {players[i].IsBanned}");
+                Console.WriteLine($"{i + 1}. ID - {_players[i].ID}. Name - {_players[i].Name}. Level - {_players[i].Level}. Is banned - {_players[i].IsBanned}");
             }
 
             WriteMessage("\nДля продолжения нажмите любую клавишу...");
         }
 
-        public void AddPlayer(List<Player> players)
+        public void AddPlayer()
         {
             string name = ReadName("\nВведите имя нового игрока: ");
-            players.Add(new Player(GenerateID(players), name));
+            _players.Add(new Player(GenerateID(_players), name));
             WriteMessage("Новый игрок создан. Для продолжения нажмите любую клавишу...");
         }
 
-        public void BanPlayer(List<Player> players)
+        public void BanPlayer()
         {
             string playerIDForBan = ReadID("\nВведите ID игрока, которого нужно забанить: ");
 
-            if (FindPlayerID(players, out int index, playerIDForBan))
+            if (FindPlayerID(out int index, playerIDForBan))
             {
-                players[index].IsBanned = true;
+                _players[index].Ban();
                 WriteMessage($"Игрок  с ID {playerIDForBan} забанен. Для продолжения нажмите любую клавишу...");
             }
         }
 
-        public void DeletePlayer(List<Player> players)
+        public void DeletePlayer()
         {
             string playerIDForDelete = ReadID("\nВведите ID игрока, которого нужно удалить: ");
 
-            if (FindPlayerID(players, out int index, playerIDForDelete))
+            if (FindPlayerID(out int index, playerIDForDelete))
             {
-                players.RemoveAt(index);
+                _players.RemoveAt(index);
                 WriteMessage($"Игрок с ID {playerIDForDelete} удален. Для продолжения нажмите любую клавишу...");
             }
         }
 
-        public void UnbanPlayer(List<Player> players)
+        public void UnbanPlayer()
         {
             string playerIDForUnBan = ReadID("\nВведите ID игрока, которого нужно разбанить: ");
 
-            if (FindPlayerID(players, out int index, playerIDForUnBan))
+            if (FindPlayerID(out int index, playerIDForUnBan))
             {
-                players[index].IsBanned = false;
+                _players[index].Unban();
                 WriteMessage($"Игрок  с ID {playerIDForUnBan} успешно разбанен. Для продолжения нажмите любую клавишу...");
             }
         }
 
-        private bool FindPlayerID(List<Player> players, out int i, string id)
+        private bool FindPlayerID(out int index, string id)
         {
             bool idIsFound = false;
-            i = 0;
+            index = 0;
 
             if (int.TryParse(id, out int value))
             {
-                for (i = 0; i < players.Count; i++)
+                for (index = 0; index < _players.Count; index++)
                 {
-                    if (players[i].ID == value)
+                    if (_players[index].ID == value)
                     {
                         idIsFound = true;
                         return idIsFound;
@@ -140,7 +140,7 @@
             Console.ReadKey();
         }
 
-        private string ReadID(string text)
+        public string ReadID(string text)
         {
             Console.Write(text);
             string value = Console.ReadLine();
@@ -186,29 +186,27 @@
      
     class Player
     {
-        private bool _isBanned;
-
+        public bool IsBanned { get; private set; }
         public int ID {get; private set;}
         public string Name { get; private set; }
         public int Level { get; private set; }
-        public bool IsBanned
-        {
-            get
-            {
-                return _isBanned;
-            }
-            set
-            {
-                _isBanned = value;
-            }
-        }
 
         public Player(int id, string name, int level = 0, bool isBanned = false)
         {
             ID = id;
             Name = name;
             Level = level;
-            _isBanned = isBanned;
+            IsBanned = isBanned;
+        }
+
+        public void Unban()
+        {
+            IsBanned = false;
+        }
+
+        public void Ban()
+        {
+            IsBanned = true;
         }
     }
 }
